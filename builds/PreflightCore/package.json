@@ -1,0 +1,10 @@
+{
+  "name": "preflight-core",
+  "version": "0.1.0",
+  "description": "Deterministic pre-send compliance check for Indian lenders' outbound borrower communications (Tier 0 — no integration required).",
+  "type": "module",
+  "main": "src/engine.js",
+  "scripts": { "test": "node --test" },
+  "license": "MIT",
+  "private": true
+}

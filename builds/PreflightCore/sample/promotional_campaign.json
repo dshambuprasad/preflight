@@ -1,0 +1,12 @@
+{
+  "_comment": "A cross-sell blast. Reads as a service message but carries an offer — the 'mixed' case that is the most common way promotional-consent rules get breached. No opt-out in the body. 19:45 IST breaches the 09:00-19:00 sales window that commences 1 Jan 2027.",
+  "campaign": {
+    "message": "Hi! Your EMI is due on 5th. Good news — you are pre-approved for a top-up loan of Rs 2,00,000 at our lowest rate. Apply now: apply.example-nbfc.in/tu9",
+    "channel": "sms",
+    "scheduledAt": "2026-09-14T19:45:00+05:30"
+  },
+  "config": {
+    "lenderName": "Example Finance",
+    "frequencyCapPerWeek": 2
+  }
+}

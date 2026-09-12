@@ -1,0 +1,35 @@
+{
+  "_comment": "RFC 8785 conformance vectors. `input` is JSON text parsed with JSON.parse; `expected` is the canonical form. Sources: RFC 8785 §3.2.3 (sorting), Appendix B (numbers), and the reference test suite's weird.json.",
+  "vectors": [
+    {
+      "name": "rfc-8785-sorting-example",
+      "input": "{\"\\u20ac\":\"Euro Sign\",\"\\r\":\"Carriage Return\",\"\\ufb33\":\"Hebrew Letter Dalet With Dagesh\",\"1\":\"One\",\"\\ud83d\\ude00\":\"Emoji: Grinning Face\",\"\\u0080\":\"Control\",\"\\u00f6\":\"Latin Small Letter O With Diaeresis\"}",
+      "expected": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\":\"Control\",\"ö\":\"Latin Small Letter O With Diaeresis\",\"€\":\"Euro Sign\",\"😀\":\"Emoji: Grinning Face\",\"דּ\":\"Hebrew Letter Dalet With Dagesh\"}"
+    },
+    {
+      "name": "weird-json",
+      "input": "{\"1\":{\"f\":{\"f\":\"hi\",\"F\":5},\"\\n\":56.0},\"10\":{},\"\":\"empty\",\"a\":{},\"111\":[{\"e\":\"yes\",\"E\":\"no\"}],\"A\":{}}",
+      "expected": "{\"\":\"empty\",\"1\":{\"\\n\":56,\"f\":{\"F\":5,\"f\":\"hi\"}},\"10\":{},\"111\":[{\"E\":\"no\",\"e\":\"yes\"}],\"A\":{},\"a\":{}}"
+    },
+    {
+      "name": "rfc-8785-appendix-b-numbers",
+      "input": "[56, 1E30, 4.50, 0.000001, 1e-7, 1e21, 100000000000000000000, 333333333.33333329, 9007199254740993, -0, 1.0, 0.1, 2.5e-16, 4.35e-10, 1e+22, 1.7976931348623157e308, 5e-324]",
+      "expected": "[56,1e+30,4.5,0.000001,1e-7,1e+21,100000000000000000000,333333333.3333333,9007199254740992,0,1,0.1,2.5e-16,4.35e-10,1e+22,1.7976931348623157e+308,5e-324]"
+    },
+    {
+      "name": "string-escapes",
+      "input": "{\"s\":\"\\u20ac\\u000f\\u0008\\u007f\\ud83d\\ude00 \\\"quoted\\\" back\\\\slash \\t tab \\n nl\"}",
+      "expected": "{\"s\":\"€\\u000f\\b😀 \\\"quoted\\\" back\\\\slash \\t tab \\n nl\"}"
+    },
+    {
+      "name": "literals-and-nesting",
+      "input": "{\"literals\":[null,true,false],\"nested\":{\"z\":[],\"a\":{}},\"numbers\":[1,-1,10,-10,1.5,-1.5]}",
+      "expected": "{\"literals\":[null,true,false],\"nested\":{\"a\":{},\"z\":[]},\"numbers\":[1,-1,10,-10,1.5,-1.5]}"
+    },
+    {
+      "name": "no-whitespace",
+      "input": "  {  \"b\"  :  [ 1 ,  2 ] , \"a\" : \"x y\"  }  ",
+      "expected": "{\"a\":\"x y\",\"b\":[1,2]}"
+    }
+  ]
+}

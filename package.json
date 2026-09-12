@@ -1,0 +1,38 @@
+{
+  "name": "preflight",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:integration": "turbo run test:integration",
+    "lint": "eslint . && pnpm dep-check && pnpm check:migrations && pnpm check:tenancy",
+    "dep-check": "depcruise packages apps --config .dependency-cruiser.cjs",
+    "check:migrations": "node scripts/check-migrations.mjs",
+    "check:tenancy": "node scripts/check-tenancy.mjs",
+    "check:licences": "license-checker --production --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;Unlicense;CC0-1.0;Python-2.0;BlueOak-1.0.0;CC-BY-4.0' --excludePrivatePackages",
+    "bench": "pnpm --filter @preflight/bench bench",
+    "gen:types": "pnpm --filter @preflight/api gen:openapi && pnpm --filter @preflight/api-types gen",
+    "db:migrate": "pnpm --filter @preflight/db migrate",
+    "seed": "pnpm --filter @preflight/api seed",
+    "dev": "pnpm --filter @preflight/api dev",
+    "ci:local": "node scripts/ci-local.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "22.20.2",
+    "dependency-cruiser": "18.2.0",
+    "eslint": "9.39.5",
+    "globals": "16.5.0",
+    "license-checker": "25.0.1",
+    "prettier": "3.9.6",
+    "turbo": "2.10.12",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.0"
+  }
+}

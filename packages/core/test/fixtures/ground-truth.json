@@ -1,0 +1,163 @@
+{
+  "_comment": "PreflightCore ground truth (builds/PreflightCore/test/engine.test.js). `expected` is the ORIGINAL engine output, captured 2026-09-12 and frozen. The port must reproduce it byte for byte on the projection defined in 12 §H D42.",
+  "legacyRuleIds": [
+    "A-RBI-001",
+    "A-RBI-002",
+    "A-RBI-003",
+    "A-RBI-005",
+    "A-RBI-006",
+    "A-RBI-008",
+    "A-RBI-011",
+    "A-RBI-012",
+    "A-WA-003"
+  ],
+  "input": {
+    "campaign": {
+      "message": "Your EMI of Rs 5,000 is overdue. Please pay immediately.",
+      "channel": "whatsapp",
+      "scheduledAt": "2026-09-10T21:30:00+05:30",
+      "purpose": "collections",
+      "borrowerSegment": "retail"
+    },
+    "contacts": [
+      {
+        "id": "c1",
+        "preferredLanguage": "english"
+      },
+      {
+        "id": "c2",
+        "preferredLanguage": "tamil"
+      },
+      {
+        "id": "c3"
+      }
+    ],
+    "config": {},
+    "now": "2026-09-05T00:00:00+05:30"
+  },
+  "expected": {
+    "findings": [
+      {
+        "ruleId": "A-RBI-001",
+        "severity": "block",
+        "title": "Recovery contact only between 08:00 and 19:00 IST",
+        "citation": {
+          "instrument": "RBI/2022-23/108, DOR.ORG.REC.65/21.04.158/2022-23 (12 Aug 2022)",
+          "title": "Outsourcing of Financial Services – Responsibilities of REs employing Recovery Agents",
+          "confidence": "SECONDARY"
+        },
+        "note": "Covers every form of contact — calls, WhatsApp, SMS and email — not calls alone. HDFC Bank has been penalised under this.",
+        "affectedCount": 3,
+        "affectedSample": [
+          "c1",
+          "c2",
+          "c3"
+        ],
+        "detail": {
+          "sendTimeIST": "21:30",
+          "window": "08:00–19:00"
+        },
+        "explanation": "Scheduled for 21:30 IST — outside the permitted 08:00–19:00 recovery window. All 3 recipients affected. The restriction covers messages, not just calls."
+      },
+      {
+        "ruleId": "A-RBI-003",
+        "severity": "warn",
+        "title": "Communication in the borrower's understood language",
+        "citation": {
+          "instrument": "RBI (NBFC – Responsible Business Conduct) Directions, 2025",
+          "title": "Fair Practices Code",
+          "confidence": "DERIVED — from the Hero FinCorp enforcement action"
+        },
+        "affectedCount": 1,
+        "affectedSample": [
+          "c2"
+        ],
+        "detail": {
+          "messageScript": "latin",
+          "note": "1 of 3 contacts have no stated language and were not assessed"
+        },
+        "explanation": "1 recipient have a stated language preference the message does not appear to match (message script: latin). Romanised text can be a false positive — review, don't auto-drop. 1 of 3 contacts have no stated language and were not assessed."
+      },
+      {
+        "ruleId": "A-RBI-005",
+        "severity": "info",
+        "title": "A contact-frequency cap must exist",
+        "citation": {
+          "instrument": "RBI (NBFC – Responsible Business Conduct) Directions, 2025",
+          "title": "Fair Practices Code",
+          "confidence": "DERIVED — from the Hero FinCorp enforcement action"
+        },
+        "note": "RBI forbids \"persistently bothering the borrowers\" but sets NO number. The duty is statutory; the threshold is the business's. This is the Layer-A to Layer-C handoff, mandated rather than invented.",
+        "affectedCount": 0,
+        "affectedSample": [],
+        "detail": {
+          "reason": "no cap configured"
+        },
+        "explanation": "No contact-frequency cap is configured. RBI requires that borrowers not be persistently contacted but sets no number — the threshold is yours to set, and right now there isn't one."
+      }
+    ],
+    "classification": {
+      "classification": "service",
+      "evaluateAs": "service",
+      "confidence": "high",
+      "promotionalMarkers": [],
+      "serviceMarkers": [
+        "emi",
+        "due",
+        "overdue"
+      ],
+      "reason": "Service/transactional language only."
+    },
+    "effectivePurpose": "collections",
+    "coverage": {
+      "rulesInBook": 9,
+      "applicable": 5,
+      "evaluated": 3,
+      "cannotEvaluate": [
+        {
+          "ruleId": "A-RBI-011",
+          "title": "Lender or agent identity disclosed in the message",
+          "reason": "required data not present",
+          "missing": [
+            "config.lenderName"
+          ]
+        },
+        {
+          "ruleId": "A-WA-003",
+          "title": "WhatsApp template variables match the approved template",
+          "reason": "required data not present",
+          "missing": [
+            "campaign.template.body"
+          ]
+        }
+      ],
+      "notApplicable": [
+        {
+          "ruleId": "A-RBI-002",
+          "title": "Microfinance recovery contact only between 09:00 and 18:00 IST"
+        },
+        {
+          "ruleId": "A-RBI-012",
+          "title": "Sales calls/visits only between 09:00 and 19:00 IST"
+        },
+        {
+          "ruleId": "A-RBI-006",
+          "title": "Explicit consent before promotional communication"
+        },
+        {
+          "ruleId": "A-RBI-008",
+          "title": "Promotional message carries an opt-out"
+        }
+      ],
+      "statement": "Checked 3 of 5 applicable rules. 2 could not be evaluated — config.lenderName, campaign.template.body."
+    },
+    "summary": {
+      "blockers": 1,
+      "warnings": 1,
+      "info": 1,
+      "cannotEvaluate": 2,
+      "audienceSize": 3,
+      "verdict": null
+    }
+  }
+}

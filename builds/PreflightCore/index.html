@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preflight — pre-send check for lender communications (India)</title>
+<meta name="description" content="Check a lending campaign against RBI communication rules before you send it: recovery and sales contact windows, promotional consent, opt-out, borrower language, WhatsApp template shape. Runs entirely in your browser.">
+<style>
+  :root{--bg:#faf9f7;--fg:#1c1b19;--mut:#6b6862;--line:#e3e0da;--block:#b3261e;--warn:#8a6116;--info:#3f5f8a;--ok:#2f6b43;--card:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:26px;margin:0 0 4px} h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:32px 0 10px}
+  .sub{color:var(--mut);margin:0 0 28px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  label{display:block;font-size:13px;color:var(--mut);margin:0 0 4px}
+  textarea,input,select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:7px;background:var(--card);font:inherit;font-size:14px;color:var(--fg)}
+  textarea{min-height:110px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+  .field{margin-bottom:14px}
+  button{background:var(--fg);color:var(--bg);border:0;border-radius:7px;padding:11px 20px;font:inherit;font-weight:600;cursor:pointer}
+  button.ghost{background:transparent;color:var(--mut);border:1px solid var(--line);font-weight:400;padding:7px 12px;font-size:13px}
+  .finding{background:var(--card);border:1px solid var(--line);border-left-width:4px;border-radius:8px;padding:13px 15px;margin-bottom:10px}
+  .finding.block{border-left-color:var(--block)} .finding.warn{border-left-color:var(--warn)} .finding.info{border-left-color:var(--info)}
+  .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:4px;color:#fff;margin-right:8px;vertical-align:1px}
+  .tag.block{background:var(--block)} .tag.warn{background:var(--warn)} .tag.info{background:var(--info)}
+  .rid{font-family:ui-monospace,monospace;font-size:12px;color:var(--mut)}
+  .expl{margin:7px 0 0} .meta{font-size:12px;color:var(--mut);margin-top:7px;border-top:1px dashed var(--line);padding-top:6px}
+  .cov{background:#fffdf5;border:1px solid #e8dcae;border-radius:8px;padding:13px 15px;margin-top:14px;font-size:14px}
+  .clean{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:8px;padding:13px 15px}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--mut)}
+  code{background:#f0eee9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Preflight</h1>
+  <p class="sub">Check a lending campaign against RBI communication rules <em>before</em> it sends. Nothing leaves your browser.</p>
+
+  <div class="grid">
+    <div>
+      <div class="field"><label for="msg">Message</label><textarea id="msg"></textarea></div>
+      <div class="field"><label for="contacts">Audience (CSV — needs an <code>id</code> column; <code>preferredLanguage</code> and <code>consentPromotional</code> optional)</label><textarea id="contacts"></textarea></div>
+    </div>
+    <div>
+      <div class="field"><label for="when">Scheduled send (IST)</label><input id="when" type="datetime-local"></div>
+      <div class="field"><label for="chan">Channel</label><select id="chan"><option value="whatsapp">WhatsApp</option><option value="sms">SMS</option><option value="email">Email</option></select></div>
+      <div class="field"><label for="purpose">Purpose</label><select id="purpose"><option value="">— not stated —</option><option value="collections">Collections / recovery</option><option value="promotional">Promotional</option><option value="service">Service / transactional</option></select></div>
+      <div class="field"><label for="seg">Borrower segment</label><select id="seg"><option value="">— not stated —</option><option value="retail">Retail</option><option value="microfinance">Microfinance</option></select></div>
+      <div class="field"><label for="lender">Lender name</label><input id="lender" placeholder="e.g. Example Finance"></div>
+      <div class="field"><label for="cap">Frequency cap (messages per week)</label><input id="cap" type="number" min="1" placeholder="not set"></div>
+    </div>
+  </div>
+
+  <p><button id="run">Run pre-flight check</button>
+     <button class="ghost" id="load">Load sample</button>
+     <button class="ghost" id="asof">Evaluate as of 1 Jan 2027</button></p>
+
+  <div id="out"></div>
+
+  <footer>
+    Rules: <strong>Layer&nbsp;A, Tier&nbsp;0</strong> — the checks that need no integration.
+    Full rulebook with citations and source-confidence marks: <code>docs/06_Layer_A_Rulebook_India.md</code>.
+    <br><br>
+    <strong>This finds gaps for human review. It does not certify compliance, and it is not legal advice.</strong>
+    Several rules are marked <em>SOURCE: SECONDARY</em> — the primary RBI text has not been read.
+  </footer>
+</div>
+
+<script type="module">
+import { evaluate } from './src/engine.js';
+import { parseCSV } from './src/util.js';
+
+const $ = id => document.getElementById(id);
+let asOf = null;
+
+const SAMPLE = {
+  msg: 'Dear customer, your EMI of Rs 8,450 is overdue since 28 Aug. Please pay immediately to avoid additional charges. Pay now: pay.example-nbfc.in/x7f2',
+  csv: `id,preferredLanguage,consentPromotional
+B-1001,hindi,yes
+B-1002,english,yes
+B-1003,tamil,
+B-1004,english,no
+B-1005,,yes
+B-1006,telugu,`,
+  when: '2026-09-14T20:15', chan: 'whatsapp', purpose: 'collections', seg: 'retail',
+  lender: 'Example Finance', cap: '',
+};
+
+function loadSample() {
+  $('msg').value = SAMPLE.msg; $('contacts').value = SAMPLE.csv; $('when').value = SAMPLE.when;
+  $('chan').value = SAMPLE.chan; $('purpose').value = SAMPLE.purpose; $('seg').value = SAMPLE.seg;
+  $('lender').value = SAMPLE.lender; $('cap').value = SAMPLE.cap;
+}
+
+function run() {
+  const local = $('when').value;
+  const campaign = {
+    message: $('msg').value,
+    channel: $('chan').value,
+    // The picker is IST wall-clock; pin the offset explicitly rather than trusting the viewer's zone.
+    scheduledAt: local ? `${local}:00+05:30` : '',
+    purpose: $('purpose').value || undefined,
+    borrowerSegment: $('seg').value || undefined,
+  };
+  const config = {
+    lenderName: $('lender').value || undefined,
+    frequencyCapPerWeek: $('cap').value ? Number($('cap').value) : undefined,
+  };
+  let contacts = [];
+  try { contacts = parseCSV($('contacts').value); } catch { /* reported as unevaluable below */ }
+
+  const r = evaluate({ campaign, contacts, config, now: asOf ?? new Date().toISOString() });
+  render(r, campaign);
+}
+
+function esc(s) { return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function render(r, campaign) {
+  const s = r.summary;
+  let h = `<h2>Result</h2>`;
+  h += `<p class="sub">${s.audienceSize} recipient(s) · read as <strong>${esc(r.effectivePurpose)}</strong>`;
+  if (r.classification.confidence === 'low') h += ` <span style="color:var(--warn)">(ambiguous — ${esc(r.classification.reason)})</span>`;
+  h += asOf ? ` · <strong>evaluated as of 1 Jan 2027</strong>` : '';
+  h += `</p>`;
+
+  if (!r.findings.length) h += `<div class="clean">No findings from the rules that could be evaluated.</div>`;
+  for (const f of r.findings) {
+    h += `<div class="finding ${f.severity}">
+      <span class="tag ${f.severity}">${f.severity.toUpperCase()}</span>
+      <span class="rid">${esc(f.ruleId)}</span> <strong>${esc(f.title)}</strong>
+      <p class="expl">${esc(f.explanation)}</p>
+      ${f.affectedCount ? `<p class="expl" style="font-size:14px;color:var(--mut)">Affected: ${f.affectedCount} — e.g. ${esc(f.affectedSample.join(', '))}</p>` : ''}
+      <div class="meta">${esc(f.citation.instrument)} · <em>${esc(f.citation.confidence)}</em></div>
+    </div>`;
+  }
+
+  h += `<div class="cov"><strong>Coverage.</strong> ${esc(r.coverage.statement)}`;
+  if (r.coverage.cannotEvaluate.length) {
+    h += `<ul style="margin:8px 0 0;padding-left:20px">`;
+    for (const c of r.coverage.cannotEvaluate) {
+      h += `<li><span class="rid">${esc(c.ruleId)}</span> ${esc(c.title)} — needs <code>${esc((c.missing||[]).join(', ') || c.reason)}</code></li>`;
+    }
+    h += `</ul><p style="margin:8px 0 0;font-size:13px">A rule that could not be evaluated is <strong>not</strong> a pass.</p>`;
+  }
+  h += `</div>`;
+  $('out').innerHTML = h;
+}
+
+$('run').onclick = () => { asOf = null; run(); };
+$('load').onclick = loadSample;
+$('asof').onclick = () => { asOf = '2027-01-01T09:00:00+05:30'; run(); };
+loadSample();
+</script>
+</body>
+</html>

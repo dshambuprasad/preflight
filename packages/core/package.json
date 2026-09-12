@@ -1,0 +1,26 @@
+{
+  "name": "@preflight/core",
+  "version": "0.1.0",
+  "description": "Preflight rule engine — pure, deterministic, zero I/O. Ported from builds/PreflightCore (04, 16 §2.1).",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "exports": {
+    ".": { "types": "./dist/src/index.d.ts", "import": "./dist/src/index.js" }
+  },
+  "files": ["dist/src"],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --noEmit false --emitDeclarationOnly false --pretty false >/dev/null || tsc -b",
+    "test": "node --test dist/test/*.test.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "libphonenumber-js": "1.13.13"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "esbuild": "0.28.2",
+    "typescript": "5.9.3"
+  }
+}

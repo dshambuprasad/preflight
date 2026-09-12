@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.turbo/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+coverage/
+e2e/test-results/
+e2e/playwright-report/
+.DS_Store
+*.log
+apps/web/dist/
+bench/results/
+packages/api-types/src/openapi.json

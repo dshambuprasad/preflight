@@ -1,0 +1,18 @@
+{
+  "_comment": "A realistic NBFC collections campaign. Scheduled at 20:15 IST — a plausible 'let's catch them after work' choice that breaches the 08:00-19:00 recovery window.",
+  "campaign": {
+    "message": "Dear customer, your EMI of Rs 8,450 is overdue since 28 Aug. Please pay immediately to avoid additional charges. Pay now: pay.example-nbfc.in/x7f2",
+    "channel": "whatsapp",
+    "scheduledAt": "2026-09-14T20:15:00+05:30",
+    "purpose": "collections",
+    "borrowerSegment": "retail",
+    "template": {
+      "body": "Dear customer, your EMI of Rs {{1}} is overdue since {{2}}. Please pay immediately to avoid additional charges. Pay now: {{3}}",
+      "variables": ["8,450", "28 Aug"]
+    }
+  },
+  "config": {
+    "lenderName": "Example Finance",
+    "frequencyCapPerWeek": null
+  }
+}
