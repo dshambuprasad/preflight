@@ -1,0 +1,32 @@
+/* 22 D3 — five colours, one type scale. Calm, document-like, high contrast (07). */
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: #1b1f24;
+  --color-ink-muted: #5b6470;
+  --color-paper: #fbfaf7;
+  --color-paper-2: #f1efe9;
+  --color-line: #d9d5cb;
+  --color-block: #b3261e;
+  --color-block-bg: #fbe9e7;
+  --color-warn: #9a6700;
+  --color-warn-bg: #fff4d6;
+  --color-info: #1f5fbf;
+  --color-info-bg: #e6eefb;
+  --color-ok: #2f6f3e;
+  --color-ok-bg: #e5f1e8;
+  --font-sans: 'IBM Plex Sans', 'Inter', system-ui, sans-serif;
+  --font-serif: 'IBM Plex Serif', Georgia, serif;
+  --text-base: 14px;
+}
+
+html { font-size: 14px; }
+body { @apply bg-paper text-ink font-sans; }
+h1, h2, h3 { @apply font-serif; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-info); outline-offset: 2px; }
+@layer components {
+.field { @apply w-full border border-line bg-white px-2 py-1.5 rounded-sm text-ink; }
+.btn { @apply inline-flex items-center gap-1 border border-line bg-white px-3 py-1.5 rounded-sm text-ink hover:bg-paper-2 disabled:opacity-50 disabled:cursor-not-allowed; }
+.btn-primary { @apply inline-flex items-center gap-1 border border-ink bg-ink px-3 py-1.5 rounded-sm text-paper hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed; }
+.chip { @apply inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-xs font-semibold uppercase tracking-wide border; }
+}
