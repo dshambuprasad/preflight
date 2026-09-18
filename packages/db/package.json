@@ -1,0 +1,35 @@
+{
+  "name": "@preflight/db",
+  "version": "0.1.0",
+  "description": "Preflight schema, migrations and tenant-scoped repository (03, 15, 16 §2.4, 18 §3).",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "exports": {
+    ".": { "types": "./dist/src/index.d.ts", "import": "./dist/src/index.js" }
+  },
+  "files": ["dist/src", "migrations"],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b",
+    "generate": "drizzle-kit generate",
+    "migrate": "node dist/src/migrate.js",
+    "test": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@preflight/core": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "pg": "8.23.0",
+    "uuid": "14.0.2",
+    "zod": "4.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "@types/pg": "8.23.1",
+    "drizzle-kit": "0.31.10",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

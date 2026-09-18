@@ -1,0 +1,20 @@
+# Preflight — laptop / demo stack (09 §4). M0: Postgres only; api and web services are added by the api/web work.
+name: preflight
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: preflight
+      POSTGRES_PASSWORD: preflight
+      POSTGRES_DB: preflight
+    ports:
+      - "5432:5432"
+    volumes:
+      - preflight-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U preflight -d preflight"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+volumes:
+  preflight-pgdata:
