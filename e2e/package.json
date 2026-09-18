@@ -4,6 +4,12 @@
   "private": true,
   "type": "module",
   "description": "Playwright — the demo script (01 §5) as a test against docker compose (11 §4). Spec lands in M1.",
-  "scripts": { "test": "playwright test" },
-  "devDependencies": { "@playwright/test": "1.63.0", "@types/node": "22.20.2" }
+  "scripts": {
+    "test": "node -e \"console.log(\\\"e2e: the demo spec (01 §5) lands in M1; run pnpm --filter @preflight/e2e e2e\\\")\"",
+    "e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/node": "22.20.2"
+  }
 }

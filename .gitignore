@@ -12,4 +12,3 @@ e2e/playwright-report/
 *.log
 apps/web/dist/
 bench/results/
-packages/api-types/src/openapi.json

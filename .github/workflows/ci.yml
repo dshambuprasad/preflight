@@ -31,6 +31,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: build
         run: pnpm build
+      - name: api-types drift (16 §2.6 — the web build fails on drift)
+        run: pnpm gen:types && git diff --exit-code -- packages/api-types/src
       - name: lint (eslint + allowed-imports matrix + migration/tenancy checks)
         run: pnpm lint
       - name: licence allowlist (09 §2)

@@ -6,7 +6,8 @@ const DATABASE_URL = process.env.DATABASE_URL ?? 'postgres://preflight:preflight
 const steps = [
   ['postgres up', 'docker compose -f infra/compose.yaml up -d db --wait'],
   ['build', 'pnpm build'],
-  ['lint', 'pnpm lint'],
+  ["api-types drift", "pnpm gen:types && git diff --exit-code -- packages/api-types/src"],
+  ["lint", "pnpm lint"],
   ['licences', 'pnpm check:licences'],
   ['unit', 'pnpm test'],
   ['integration', 'pnpm test:integration'],
