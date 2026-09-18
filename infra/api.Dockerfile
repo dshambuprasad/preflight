@@ -14,7 +14,7 @@ COPY rulebook ./rulebook
 COPY builds/PreflightCore ./builds/PreflightCore
 RUN pnpm install --frozen-lockfile --filter @preflight/api... --filter @preflight/worker...
 RUN pnpm --filter @preflight/core --filter @preflight/rules-india --filter @preflight/rulegraph --filter @preflight/db --filter @preflight/api --filter @preflight/worker run build
-RUN pnpm --filter @preflight/api --filter @preflight/worker --prod deploy /out/api
+RUN pnpm --filter @preflight/api --prod deploy /out/api
 
 FROM base AS runtime
 ENV NODE_ENV=production PREFLIGHT_RULEBOOK_DIR=/app/rulebook
