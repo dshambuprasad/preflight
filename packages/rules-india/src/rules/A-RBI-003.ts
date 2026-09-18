@@ -48,10 +48,11 @@ export const rule: Rule = {
     );
   },
   suggestFix(ctx, result) {
+    const affected = new Set(result.affected); // O(n), not O(n²) — 04 §10
     const languages = [
       ...new Set(
         ctx.contacts
-          .filter((c) => result.affected.includes(c.id))
+          .filter((c) => affected.has(c.id))
           .map((c) => String(c.preferredLanguage ?? '').toLowerCase())
           .filter(Boolean),
       ),

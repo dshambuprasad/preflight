@@ -1,0 +1,7 @@
+{
+  "_comment": "pnpm bench compares against these means (ms); pnpm bench:update rewrites. 18 §7.",
+  "meanMs": {
+    "check-t0-1e4": 11.88,
+    "check-t0-1e5": 78.5
+  }
+}

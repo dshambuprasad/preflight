@@ -39,6 +39,25 @@ importers:
         specifier: 8.70.0
         version: 8.70.0(eslint@9.39.5)(typescript@5.9.3)
 
+  bench:
+    dependencies:
+      '@preflight/core':
+        specifier: workspace:*
+        version: link:../packages/core
+      '@preflight/rules-india':
+        specifier: workspace:*
+        version: link:../packages/rules-india
+      tinybench:
+        specifier: 2.9.0
+        version: 2.9.0
+    devDependencies:
+      '@types/node':
+        specifier: 22.20.2
+        version: 22.20.2
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   packages/core:
     dependencies:
       libphonenumber-js:
