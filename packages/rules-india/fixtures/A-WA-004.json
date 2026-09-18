@@ -1,0 +1,155 @@
+{
+  "ruleId": "A-WA-004",
+  "cases": [
+    {
+      "name": "cannot: no platform",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "cannot_evaluate",
+        "missing": [
+          "platform.messagingLimit"
+        ]
+      }
+    },
+    {
+      "name": "fail: 3 > TIER_250? no — use audience 300",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "audience": {
+        "rows": 300,
+        "duplicates": [],
+        "unresolvable": []
+      },
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "tier1": {
+        "platform": {
+          "messagingLimitTier": "TIER_250"
+        }
+      },
+      "expect": {
+        "status": "fail",
+        "severity": "warn"
+      }
+    },
+    {
+      "name": "pass",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "tier1": {
+        "platform": {
+          "messagingLimitTier": "TIER_1K"
+        }
+      },
+      "expect": {
+        "status": "pass"
+      }
+    },
+    {
+      "name": "not applicable: sms",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "not_applicable"
+      }
+    }
+  ]
+}

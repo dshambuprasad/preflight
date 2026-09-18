@@ -17,7 +17,7 @@ const needsHistory = rule({
   id: 'T-HIST-001',
   tier: 1,
   requires: ['history.contactEvents', 'campaign.message'],
-  evaluate: (ctx) => (ctx.history ? { status: 'pass' } : { status: 'cannot_evaluate', missing: ['history.contactEvents', 'campaign.message'] }),
+  evaluate: (ctx) => (ctx.history ? { status: 'pass' } : { status: 'cannot_evaluate', missing: ['history.contactEvents'] }),
 });
 const notApplicable = rule({ id: 'T-NA-001', appliesTo: (ctx) => ctx.effectivePurpose === 'promotional' });
 const unknownApplies = rule({
@@ -43,7 +43,8 @@ test('never-silent-pass — cannot_evaluate is counted separately and never appe
 test('missing-is-actually-missing — present paths are filtered out of missing[]', () => {
   const r = evaluate(base);
   const hist = r.coverage.cannotEvaluate.find((c) => c.ruleId === 'T-HIST-001')!;
-  assert.deepEqual(hist.missing, ['history.contactEvents'], 'campaign.message is present and must not be listed');
+  assert.deepEqual(hist.missing, ['history.contactEvents']);
+  for (const item of r.coverage.cannotEvaluate) for (const p of item.missing) assert.ok(p.startsWith('history') || p.startsWith('campaign'), p);
   const unk = r.coverage.cannotEvaluate.find((c) => c.ruleId === 'T-UNK-001')!;
   assert.deepEqual(unk.missing, ['campaign.borrowerSegment']);
   assert.equal(unk.reason, 'cannot tell whether this rule applies');

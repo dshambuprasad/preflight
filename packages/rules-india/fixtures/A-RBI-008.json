@@ -1,0 +1,137 @@
+{
+  "ruleId": "A-RBI-008",
+  "cases": [
+    {
+      "name": "fail warn: no opt-out",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "fail",
+        "severity": "warn",
+        "affected": []
+      }
+    },
+    {
+      "name": "fail block from 2027",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2027-02-01T10:00:00+05:30",
+      "expect": {
+        "status": "fail",
+        "severity": "block"
+      }
+    },
+    {
+      "name": "pass: Reply STOP",
+      "campaign": {
+        "message": "Exclusive offer! Apply now. Reply STOP to opt out.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "pass"
+      }
+    },
+    {
+      "name": "not applicable: collections",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "not_applicable"
+      }
+    }
+  ]
+}

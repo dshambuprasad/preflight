@@ -1,0 +1,251 @@
+{
+  "ruleId": "A-RBI-006",
+  "cases": [
+    {
+      "name": "fail warn before 2027",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "fail",
+        "severity": "warn",
+        "affected": [
+          "c02",
+          "c03"
+        ]
+      }
+    },
+    {
+      "name": "fail block from 2027-01-01",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2027-02-01T10:00:00+05:30",
+      "expect": {
+        "status": "fail",
+        "severity": "block",
+        "affected": [
+          "c02",
+          "c03"
+        ]
+      }
+    },
+    {
+      "name": "boundary: 2026-12-31 23:59 IST is still warn (UTC-parsed date)",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-12-31T23:59:00Z",
+      "expect": {
+        "status": "fail",
+        "severity": "warn"
+      }
+    },
+    {
+      "name": "boundary: 2027-01-01T00:00Z is block",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2027-01-01T00:00:00Z",
+      "expect": {
+        "status": "fail",
+        "severity": "block"
+      }
+    },
+    {
+      "name": "pass: all granted",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "pass"
+      }
+    },
+    {
+      "name": "cannot: consent absent everywhere",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "cannot_evaluate",
+        "missing": [
+          "contact.consentPromotional"
+        ]
+      }
+    },
+    {
+      "name": "not applicable: collections",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "not_applicable"
+      }
+    },
+    {
+      "name": "unknown counts as not consented",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "sms",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "consentPromotional": "unknown"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "fail",
+        "affected": [
+          "c01"
+        ]
+      }
+    }
+  ]
+}

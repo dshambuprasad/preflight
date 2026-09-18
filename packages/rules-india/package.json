@@ -1,0 +1,24 @@
+{
+  "name": "@preflight/rules-india",
+  "version": "1.3.0",
+  "description": "India Layer-A rule pack (22 send-time rules) + preflight-hygiene pack (2). Logic only; meaning and provenance live in rulebook/*.ttl.",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "exports": {
+    ".": { "types": "./dist/src/index.d.ts", "import": "./dist/src/index.js" }
+  },
+  "files": ["dist/src"],
+  "scripts": {
+    "build": "tsc -b && node scripts/hash-sources.mjs",
+    "test": "node --test dist/test/*.test.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@preflight/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "typescript": "5.9.3"
+  }
+}

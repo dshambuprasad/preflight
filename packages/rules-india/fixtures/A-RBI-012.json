@@ -1,0 +1,175 @@
+{
+  "ruleId": "A-RBI-012",
+  "cases": [
+    {
+      "name": "not applicable: whatsapp",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "not_applicable"
+      }
+    },
+    {
+      "name": "fail warn: voice 19:45 before 2027",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "voice",
+        "scheduledAt": "2026-09-14T19:45:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "fail",
+        "severity": "warn",
+        "affected": [
+          "c01",
+          "c02",
+          "c03"
+        ]
+      }
+    },
+    {
+      "name": "fail block: voice 19:45 in 2027",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "voice",
+        "scheduledAt": "2026-09-14T19:45:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2027-02-01T10:00:00+05:30",
+      "expect": {
+        "status": "fail",
+        "severity": "block"
+      }
+    },
+    {
+      "name": "pass: visit 10:00",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "visit",
+        "scheduledAt": "2026-09-14T10:00:00+05:30",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "pass"
+      }
+    },
+    {
+      "name": "cannot: voice with bad time",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "voice",
+        "scheduledAt": "x",
+        "purpose": "promotional"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "cannot_evaluate",
+        "missing": [
+          "campaign.scheduledAt"
+        ]
+      }
+    }
+  ]
+}

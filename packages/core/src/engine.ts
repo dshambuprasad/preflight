@@ -141,7 +141,8 @@ function runRule(rule: Rule, ctx: Context): Outcome {
     return {
       kind: 'cannot',
       reason: result.reason ?? 'required data not present',
-      missing: result.missing.filter((p) => isAbsent(ctx, p)),
+      // Rules own their missing[] (a present-but-unparseable value is still unusable); fixtures assert it exactly.
+      missing: [...result.missing],
     };
   }
   if (result.status === 'not_applicable') return { kind: 'na', reason: result.reason };

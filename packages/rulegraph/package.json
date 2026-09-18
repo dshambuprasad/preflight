@@ -1,0 +1,29 @@
+{
+  "name": "@preflight/rulegraph",
+  "version": "0.1.0",
+  "description": "Loads rulebook/*.ttl, validates graph↔code parity, computes the rulebook hash, serves graph JSON and explain paths (04 §7, 16 §2.3).",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "exports": {
+    ".": { "types": "./dist/src/index.d.ts", "import": "./dist/src/index.js" }
+  },
+  "files": ["dist/src"],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@preflight/core": "workspace:*",
+    "n3": "1.26.0"
+  },
+  "devDependencies": {
+    "@preflight/rules-india": "workspace:*",
+    "@types/n3": "1.26.4",
+    "@types/node": "22.20.2",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

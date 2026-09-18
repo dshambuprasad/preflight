@@ -1,0 +1,243 @@
+{
+  "ruleId": "A-WA-002",
+  "cases": [
+    {
+      "name": "not applicable: no template",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail"
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "not_applicable"
+      }
+    },
+    {
+      "name": "cannot: no platform templates + no externalId",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail",
+        "template": {
+          "body": "Hi {{1}}",
+          "variables": [
+            "x"
+          ]
+        }
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "expect": {
+        "status": "cannot_evaluate",
+        "missing": [
+          "campaign.template.externalId",
+          "platform.templates"
+        ]
+      }
+    },
+    {
+      "name": "fail: template PENDING",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail",
+        "template": {
+          "body": "Hi {{1}}",
+          "variables": [
+            "x"
+          ],
+          "externalId": "emi_due"
+        }
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "tier1": {
+        "platform": {
+          "templates": [
+            {
+              "externalId": "emi_due",
+              "name": "emi_due",
+              "status": "PENDING",
+              "category": "UTILITY",
+              "body": "Hi {{1}}",
+              "variableCount": 1
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": "fail",
+        "severity": "block"
+      }
+    },
+    {
+      "name": "fail: category mismatch",
+      "campaign": {
+        "message": "Exclusive offer! You are pre-approved for a top-up loan. Apply now.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T11:00:00+05:30",
+        "purpose": "promotional",
+        "template": {
+          "body": "Offer {{1}}",
+          "variables": [
+            "x"
+          ],
+          "externalId": "offer"
+        }
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "tier1": {
+        "platform": {
+          "templates": [
+            {
+              "externalId": "offer",
+              "name": "offer",
+              "status": "APPROVED",
+              "category": "UTILITY",
+              "body": "Offer {{1}}",
+              "variableCount": 1
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": "fail"
+      }
+    },
+    {
+      "name": "pass",
+      "campaign": {
+        "message": "Your EMI of Rs 8,450 is overdue. Please pay immediately.",
+        "channel": "whatsapp",
+        "scheduledAt": "2026-09-14T20:15:00+05:30",
+        "purpose": "collections",
+        "borrowerSegment": "retail",
+        "template": {
+          "body": "Hi {{1}}",
+          "variables": [
+            "x"
+          ],
+          "externalId": "emi_due"
+        }
+      },
+      "contacts": [
+        {
+          "id": "c01",
+          "identityKey": "phone:+919812340001",
+          "preferredLanguage": "english",
+          "consentPromotional": "granted"
+        },
+        {
+          "id": "c02",
+          "identityKey": "phone:+919812340002",
+          "preferredLanguage": "tamil",
+          "consentPromotional": "denied"
+        },
+        {
+          "id": "c03",
+          "identityKey": "phone:+919812340003"
+        }
+      ],
+      "config": {},
+      "asOf": "2026-09-12T10:00:00+05:30",
+      "tier1": {
+        "platform": {
+          "templates": [
+            {
+              "externalId": "emi_due",
+              "name": "emi_due",
+              "status": "APPROVED",
+              "category": "UTILITY",
+              "body": "Hi {{1}}",
+              "variableCount": 1
+            }
+          ]
+        }
+      },
+      "expect": {
+        "status": "pass"
+      }
+    }
+  ]
+}

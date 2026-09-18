@@ -1,0 +1,46 @@
+# Preflight rulebook — audience hygiene pack (product rules, not legal obligations). 05 §3, 14 §2, D40.
+
+@prefix pf:      <https://preflight.dev/ns/pf#> .
+@prefix rule:    <https://preflight.dev/rule/> .
+@prefix inst:    <https://preflight.dev/instrument/> .
+@prefix reg:     <https://preflight.dev/regulator/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+reg:Preflight a pf:Regulator ; rdfs:label "Preflight (product)" ; pf:jurisdiction "PRODUCT" .
+
+inst:PREFLIGHT-HYGIENE a pf:Instrument ;
+  pf:reference "Preflight audience-hygiene rule" ;
+  dcterms:title "Product rule — data quality of the audience, not a legal obligation" ;
+  pf:sourceConfidence "DERIVED" ;
+  prov:wasAttributedTo reg:Preflight .
+
+<https://preflight.dev/clause/PREFLIGHT-HYGIENE/duplicates> a pf:Clause ;
+  pf:paragraph "Duplicate recipients" ;
+  pf:text "Rows sharing an identity key within one version are duplicates; all but the first are reported and offered for removal (05 §3)." ;
+  prov:wasQuotedFrom inst:PREFLIGHT-HYGIENE .
+
+<https://preflight.dev/clause/PREFLIGHT-HYGIENE/conflicting-consent> a pf:Clause ;
+  pf:paragraph "Conflicting consent" ;
+  pf:text "When one identity carries contradictory consent values within an upload, or the upload contradicts a later withdrawal on record, the stricter value wins and the conflict is reported (14 §2, D37)." ;
+  prov:wasQuotedFrom inst:PREFLIGHT-HYGIENE .
+
+rule:A-PF-001 a pf:Rule ;
+  pf:id "A-PF-001" ; pf:pack "preflight-hygiene" ; pf:layer "C" ; pf:tier 0 ; pf:category "audience" ;
+  pf:title "Duplicate recipients" ;
+  pf:severity "warn" ;
+  pf:sendTimeCheck true ;
+  pf:requires "audience.duplicates" ;
+  pf:severityBasis "Duplicates inflate frequency and cost but are not a legal breach; warn with a one-click drop." ;
+  pf:derivedFrom <https://preflight.dev/clause/PREFLIGHT-HYGIENE/duplicates> .
+
+rule:A-PF-002 a pf:Rule ;
+  pf:id "A-PF-002" ; pf:pack "preflight-hygiene" ; pf:layer "C" ; pf:tier 0 ; pf:category "consent" ;
+  pf:title "Conflicting consent" ;
+  pf:severity "warn" ;
+  pf:sendTimeCheck true ;
+  pf:requires "contact.consentSource" ;
+  pf:severityBasis "The stricter value has already been applied (deny wins); the finding surfaces the data-quality problem for the source to fix." ;
+  pf:derivedFrom <https://preflight.dev/clause/PREFLIGHT-HYGIENE/conflicting-consent> .

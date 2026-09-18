@@ -12,7 +12,7 @@
     "test": "turbo run test",
     "test:integration": "turbo run test:integration",
     "lint": "eslint . && pnpm dep-check && pnpm check:migrations && pnpm check:tenancy",
-    "dep-check": "depcruise packages apps --config .dependency-cruiser.cjs",
+    "dep-check": "node scripts/depcruise.mjs",
     "check:migrations": "node scripts/check-migrations.mjs",
     "check:tenancy": "node scripts/check-tenancy.mjs",
     "check:licences": "license-checker --production --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;Unlicense;CC0-1.0;Python-2.0;BlueOak-1.0.0;CC-BY-4.0' --excludePrivatePackages",

@@ -1,0 +1,494 @@
+# Preflight rulebook — India, Layer A (statutory / platform). Source of truth for rule MEANING and
+# PROVENANCE (04 §7, D10). Logic lives in packages/rules-india. Parity is validated at boot.
+# 25 pf:Rule nodes: 22 send-time rules + 3 context nodes (pf:sendTimeCheck false — graph only, D20).
+# Standing caveat: research artifact, not legal advice (docs/06).
+
+@prefix pf:      <https://preflight.dev/ns/pf#> .
+@prefix rule:    <https://preflight.dev/rule/> .
+@prefix inst:    <https://preflight.dev/instrument/> .
+@prefix reg:     <https://preflight.dev/regulator/> .
+@prefix enf:     <https://preflight.dev/enforcement/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+# ---------------------------------------------------------------- regulators
+
+reg:RBI   a pf:Regulator ; rdfs:label "Reserve Bank of India" ; pf:jurisdiction "IN" .
+reg:TRAI  a pf:Regulator ; rdfs:label "Telecom Regulatory Authority of India" ; pf:jurisdiction "IN" .
+reg:MeitY a pf:Regulator ; rdfs:label "MeitY / Data Protection Board of India" ; pf:jurisdiction "IN" .
+reg:Meta  a pf:Regulator ; rdfs:label "Meta (WhatsApp Business Platform)" ; pf:jurisdiction "PLATFORM" .
+reg:FACE  a pf:Regulator ; rdfs:label "FACE (Fintech Association for Consumer Empowerment, RBI-recognised SRO)" ; pf:jurisdiction "IN" .
+
+# ---------------------------------------------------------------- instruments
+
+inst:RBI-2022-23-108 a pf:Instrument ;
+  pf:reference "RBI/2022-23/108, DOR.ORG.REC.65/21.04.158/2022-23 (12 Aug 2022)" ;
+  dcterms:title "Outsourcing of Financial Services – Responsibilities of REs employing Recovery Agents" ;
+  dcterms:issued "2022-08-12"^^xsd:date ;
+  pf:sourceConfidence "SECONDARY" ;
+  prov:wasAttributedTo reg:RBI ;
+  rdfs:comment "Not repealed; footnote-referenced by the Digital Lending Directions 2025. Clause text not yet read against the primary circular." .
+
+inst:RBI-2026-27-115 a pf:Instrument ;
+  pf:reference "RBI/2026-27/115, DOR.MCS.REC.No.94/01-01-032/2026-27 (15 Jun 2026)" ;
+  dcterms:title "RBI (Commercial Banks – Responsible Business Conduct) Second Amendment Directions, 2026 — effective 1 Jan 2027" ;
+  dcterms:issued "2026-06-15"^^xsd:date ;
+  pf:effectiveFrom "2027-01-01"^^xsd:date ;
+  pf:sourceConfidence "PRIMARY" ;
+  pf:scopeNote "Commercial banks other than SFBs, Payments Banks, RRBs and LABs. NBFC sibling direction NOT yet verified (12 §C O8) — UNVERIFIED for NBFC tenants." ;
+  pf:sourceFile "docs/research/sources/RBI_2026-27_115_RBC_Second_Amendment.PDF" ;
+  prov:wasAttributedTo reg:RBI .
+
+inst:RBI-NBFC-RBC-2025 a pf:Instrument ;
+  pf:reference "RBI (NBFC – Responsible Business Conduct) Directions, 2025" ;
+  dcterms:title "Fair Practices Code" ;
+  dcterms:issued "2025-11-28"^^xsd:date ;
+  pf:sourceConfidence "DERIVED" ;
+  prov:wasAttributedTo reg:RBI ;
+  rdfs:comment "The 28 Nov 2025 rulebook restructure replaced the 2023 Master Direction with 35 topical Directions. Confidence is DERIVED from the Hero FinCorp enforcement action." .
+
+inst:RBI-DLD-2025 a pf:Instrument ;
+  pf:reference "RBI Digital Lending Directions, 2025" ;
+  dcterms:title "Digital Lending Directions" ;
+  dcterms:issued "2025-01-01"^^xsd:date ;
+  pf:sourceConfidence "SECONDARY" ;
+  prov:wasAttributedTo reg:RBI .
+
+inst:TRAI-TCCCPR-2018 a pf:Instrument ;
+  pf:reference "TRAI Telecom Commercial Communications Customer Preference Regulations, 2018" ;
+  dcterms:title "TCCCPR 2018 (DLT registration, DND/NCPR)" ;
+  dcterms:issued "2018-07-19"^^xsd:date ;
+  pf:sourceConfidence "SECONDARY" ;
+  prov:wasAttributedTo reg:TRAI ;
+  rdfs:comment "DND and DLT do NOT apply to WhatsApp — TRAI has twice declined to regulate OTT communications (2018, June 2024)." .
+
+inst:DPDP-2023 a pf:Instrument ;
+  pf:reference "Digital Personal Data Protection Act, 2023" ;
+  dcterms:title "DPDP Act — purpose limitation and consent (ss. 6–7); ordinary fiduciaries from 13 May 2027" ;
+  dcterms:issued "2023-08-11"^^xsd:date ;
+  pf:effectiveFrom "2027-05-13"^^xsd:date ;
+  pf:sourceConfidence "SECONDARY" ;
+  prov:wasAttributedTo reg:MeitY ;
+  rdfs:comment "Data Protection Board not seated as of Jun 2026; zero penalties ever levied." .
+
+inst:META-WA-POLICY a pf:Instrument ;
+  pf:reference "WhatsApp Business Platform policy (Meta)" ;
+  dcterms:title "Message template specification" ;
+  pf:sourceConfidence "PLATFORM" ;
+  pf:url "https://developers.facebook.com/docs/whatsapp/message-templates/guidelines/" ;
+  prov:wasAttributedTo reg:Meta ;
+  rdfs:comment "Not law — Meta's rules, enforced by an algorithm immediately." .
+
+inst:FACE-FREQUENCY a pf:Instrument ;
+  pf:reference "FACE (Fintech Association for Consumer Empowerment) guidance on contact frequency" ;
+  dcterms:title "SRO guidance: set an internal contact-frequency limit" ;
+  pf:sourceConfidence "SECONDARY" ;
+  prov:wasAttributedTo reg:FACE .
+
+# ---------------------------------------------------------------- clauses
+
+<https://preflight.dev/clause/RBI-2022-23-108/recovery-hours> a pf:Clause ;
+  pf:paragraph "Recovery agent conduct — contact hours" ;
+  pf:text "[paraphrase — SECONDARY] Recovery/collection contact with borrowers only between 08:00 and 19:00 borrower local time. Applies to every form of contact — calls, WhatsApp, SMS and email." ;
+  prov:wasQuotedFrom inst:RBI-2022-23-108 .
+
+<https://preflight.dev/clause/RBI-2022-23-108/microfinance-hours> a pf:Clause ;
+  pf:paragraph "Microfinance borrowers — contact hours" ;
+  pf:text "[paraphrase — SECONDARY] Collection contact with microfinance borrowers only between 09:00 and 18:00." ;
+  prov:wasQuotedFrom inst:RBI-2022-23-108 .
+
+<https://preflight.dev/clause/RBI-NBFC-RBC-2025/fpc-vernacular> a pf:Clause ;
+  pf:paragraph "Fair Practices Code — language of communication" ;
+  pf:text "[paraphrase — DERIVED from Hero FinCorp enforcement] Communications and loan terms must be conveyed in a language the borrower understands (vernacular)." ;
+  prov:wasQuotedFrom inst:RBI-NBFC-RBC-2025 .
+
+<https://preflight.dev/clause/RBI-NBFC-RBC-2025/fpc-harassment> a pf:Clause ;
+  pf:paragraph "Fair Practices Code — recovery conduct" ;
+  pf:text "[paraphrase — SECONDARY] REs must not resort to undue harassment, viz., persistently bothering the borrowers at odd hours. RBI sets no numeric contact cap." ;
+  prov:wasQuotedFrom inst:RBI-NBFC-RBC-2025 .
+
+<https://preflight.dev/clause/FACE-FREQUENCY/internal-limit> a pf:Clause ;
+  pf:paragraph "SRO guidance" ;
+  pf:text "[paraphrase — SECONDARY] Member firms should set their own internal limit on contact frequency." ;
+  prov:wasQuotedFrom inst:FACE-FREQUENCY .
+
+<https://preflight.dev/clause/RBI-DLD-2025/8v> a pf:Clause ;
+  pf:paragraph "para 8(v)" ;
+  pf:text "[paraphrase — SECONDARY] The details of the recovery agent must be communicated to the borrower before the agent first contacts them." ;
+  prov:wasQuotedFrom inst:RBI-DLD-2025 .
+
+<https://preflight.dev/clause/RBI-DLD-2025/lsp-identity> a pf:Clause ;
+  pf:paragraph "LSP / agent identity" ;
+  pf:text "[paraphrase — SECONDARY] The identity of the lender / LSP / agent must be disclosed to the borrower in communications." ;
+  prov:wasQuotedFrom inst:RBI-DLD-2025 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85G> a pf:Clause ;
+  pf:paragraph "85G" ;
+  pf:text "each product / service shall be clearly enumerated and the customer shall have the option to choose only the desired product(s)" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85G-retention> a pf:Clause ;
+  pf:paragraph "85G (retention)" ;
+  pf:text "store or preserve consent and related records … till one year from the date of cessation of the contractual agreement" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85I> a pf:Clause ;
+  pf:paragraph "85I" ;
+  pf:text "default choice for the customer to give consent shall be 'No'" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/4-10.1A> a pf:Clause ;
+  pf:paragraph "4(10.1A) and Annex IIA" ;
+  pf:text "[PRIMARY, summarised] Dark-pattern definition; Annex IIA lists 13 dark patterns including \"false urgency\", \"basket sneaking\", \"nagging\"." ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85K> a pf:Clause ;
+  pf:paragraph "85K" ;
+  pf:text "shall disclose the interest rate and other fees / charges" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85L> a pf:Clause ;
+  pf:paragraph "85L" ;
+  pf:text "send promotional communication / alerts about promotional offers … only if he / she has given explicit consent" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85M> a pf:Clause ;
+  pf:paragraph "85M" ;
+  pf:text "process for unsubscribing from any kind of services or promotional communication is easy and simple" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85N-3> a pf:Clause ;
+  pf:paragraph "85N(3)" ;
+  pf:text "send any communication to the customer only in the mode and format approved by the bank" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85N-4> a pf:Clause ;
+  pf:paragraph "85N(4)" ;
+  pf:text "make telephonic contacts and / or visits to customers normally between 09:00 hours and 19:00 hours" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85N-7> a pf:Clause ;
+  pf:paragraph "85N(7)" ;
+  pf:text "[PRIMARY, summarised] Agents must pass customers' \"Do Not Disturb for promotional communication\" requests to the bank." ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85O> a pf:Clause ;
+  pf:paragraph "85O" ;
+  pf:text "[PRIMARY, summarised] No misrepresentation of the organisation's name." ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85Q> a pf:Clause ;
+  pf:paragraph "85Q" ;
+  pf:text "obtain explicit consent for each product / service" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85R> a pf:Clause ;
+  pf:paragraph "85R" ;
+  pf:text "also available in the language of the region or in a language understood by the customer" ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/RBI-2026-27-115/85ZA-1> a pf:Clause ;
+  pf:paragraph "85ZA(1)" ;
+  pf:text "[PRIMARY, summarised] Banks must also comply with DoT/TRAI TCCCPR 2018." ;
+  prov:wasQuotedFrom inst:RBI-2026-27-115 .
+
+<https://preflight.dev/clause/TRAI-TCCCPR-2018/dlt> a pf:Clause ;
+  pf:paragraph "DLT header and content-template registration" ;
+  pf:text "[paraphrase — SECONDARY] Promotional SMS must originate from a registered header using a pre-registered content template on the DLT platform." ;
+  prov:wasQuotedFrom inst:TRAI-TCCCPR-2018 .
+
+<https://preflight.dev/clause/TRAI-TCCCPR-2018/ncpr> a pf:Clause ;
+  pf:paragraph "NCPR / DND" ;
+  pf:text "[paraphrase — SECONDARY] Numbers registered on the National Customer Preference Register must not receive unsolicited commercial communication by SMS or voice." ;
+  prov:wasQuotedFrom inst:TRAI-TCCCPR-2018 .
+
+<https://preflight.dev/clause/DPDP-2023/s5> a pf:Clause ;
+  pf:paragraph "s.5" ;
+  pf:text "[paraphrase — SECONDARY] A notice must accompany or precede the request for consent, stating the personal data and the purpose." ;
+  prov:wasQuotedFrom inst:DPDP-2023 .
+
+<https://preflight.dev/clause/DPDP-2023/s6> a pf:Clause ;
+  pf:paragraph "s.6" ;
+  pf:text "[paraphrase — SECONDARY] Consent is free, specific, informed, unconditional and unambiguous, limited to the specified purpose; it may be withdrawn at any time with ease comparable to giving it." ;
+  prov:wasQuotedFrom inst:DPDP-2023 .
+
+<https://preflight.dev/clause/META-WA-POLICY/session-window> a pf:Clause ;
+  pf:paragraph "24-hour customer service window" ;
+  pf:text "[PLATFORM] Outside 24 hours from the customer's last inbound message, a business may only send an approved message template." ;
+  prov:wasQuotedFrom inst:META-WA-POLICY .
+
+<https://preflight.dev/clause/META-WA-POLICY/template-approval> a pf:Clause ;
+  pf:paragraph "Template approval and category" ;
+  pf:text "[PLATFORM] Templates must be APPROVED and correctly categorised as MARKETING, UTILITY or AUTHENTICATION; miscategorisation is rejected or paused." ;
+  prov:wasQuotedFrom inst:META-WA-POLICY .
+
+<https://preflight.dev/clause/META-WA-POLICY/template-variables> a pf:Clause ;
+  pf:paragraph "Template variable shape" ;
+  pf:text "[PLATFORM] Variable count, ordering and format must match the approved template; a mismatch is rejected at send." ;
+  prov:wasQuotedFrom inst:META-WA-POLICY .
+
+<https://preflight.dev/clause/META-WA-POLICY/messaging-limits> a pf:Clause ;
+  pf:paragraph "Messaging limit tiers" ;
+  pf:text "[PLATFORM] A phone number may initiate conversations with up to 250 / 1K / 10K / 100K / unlimited unique customers in a rolling 24-hour period." ;
+  prov:wasQuotedFrom inst:META-WA-POLICY .
+
+<https://preflight.dev/clause/META-WA-POLICY/quality-rating> a pf:Clause ;
+  pf:paragraph "Quality rating" ;
+  pf:text "[PLATFORM] Quality rating GREEN / YELLOW / RED reflects recent customer feedback (blocks, reports); a degraded rating leads to throttling." ;
+  prov:wasQuotedFrom inst:META-WA-POLICY .
+
+# ---------------------------------------------------------------- enforcement actions
+
+enf:HDFC-2024 a pf:EnforcementAction ;
+  pf:entity "HDFC Bank Limited" ;
+  pf:date "2024-09-10"^^xsd:date ;
+  pf:amount 10000000 ;
+  pf:summary "\"It failed to ensure that customers are not contacted after 7 pm and before 7 am\" — RBI press-release wording via FACE compilation; ₹100 lakh multi-charge order." ;
+  pf:evidences rule:A-RBI-001 .
+
+enf:HERO-FINCORP-2024 a pf:EnforcementAction ;
+  pf:entity "Hero FinCorp Limited" ;
+  pf:date "2024-05-24"^^xsd:date ;
+  pf:amount 310000 ;
+  pf:summary "\"The company did not convey the terms and conditions of loans in writing to the borrowers in the vernacular language understood by them.\"" ;
+  pf:evidences rule:A-RBI-003 .
+
+enf:SHAHA-FINLEASE-2026 a pf:EnforcementAction ;
+  pf:entity "Shaha Finlease Private Limited" ;
+  pf:date "2026-01-05"^^xsd:date ;
+  pf:amount 10000 ;
+  pf:summary "\"The company failed to put in place a system of periodical review of compliance of the 'Fair Practices Code'.\" — an FPC governance failure, not a messaging act; shows FPC duties are enforced." ;
+  pf:url "https://rbi.org.in/commonman/Upload/English/PressRelease/PDFs/PR1853.pdf" ;
+  pf:evidences rule:A-RBI-005 .
+
+# ---------------------------------------------------------------- rules: A-RBI
+
+rule:A-RBI-001 a pf:Rule ;
+  pf:id "A-RBI-001" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "timing" ;
+  pf:title "Recovery contact only between 08:00 and 19:00 IST" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.purpose", "campaign.scheduledAt" ;
+  pf:severityBasis "Enforced precedent (HDFC Bank), unambiguous threshold, zero data dependencies — a send outside the window is a chargeable violation." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2022-23-108/recovery-hours> .
+
+rule:A-RBI-002 a pf:Rule ;
+  pf:id "A-RBI-002" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "timing" ;
+  pf:title "Microfinance recovery contact only between 09:00 and 18:00 IST" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.purpose", "campaign.borrowerSegment", "campaign.scheduledAt" ;
+  pf:severityBasis "Same shape as A-RBI-001 with a narrower statutory window for a more vulnerable borrower class." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2022-23-108/microfinance-hours> .
+
+rule:A-RBI-003 a pf:Rule ;
+  pf:id "A-RBI-003" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "content" ;
+  pf:title "Communication in the borrower's understood language" ;
+  pf:severity "warn" ;
+  pf:sendTimeCheck true ;
+  pf:requires "contact.preferredLanguage", "campaign.message" ;
+  pf:severityBasis "Enforced (Hero FinCorp) but script detection cannot distinguish romanised vernacular from English — a false-positive risk keeps this at warn for human review." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-NBFC-RBC-2025/fpc-vernacular>, <https://preflight.dev/clause/RBI-2026-27-115/85R> .
+
+rule:A-RBI-004 a pf:Rule ;
+  pf:id "A-RBI-004" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "identity" ;
+  pf:title "Recovery agent identity sent to borrower before first contact" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.purpose", "history.contactEvents" ;
+  pf:severityBasis "A sequence obligation in the Digital Lending Directions; contacting a borrower before agent details were shared is a direct breach." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-DLD-2025/8v> .
+
+rule:A-RBI-005 a pf:Rule ;
+  pf:id "A-RBI-005" ; pf:pack "india-layer-a" ; pf:layer "A→C" ; pf:tier 0 ; pf:category "timing" ;
+  pf:title "A contact-frequency cap must exist" ;
+  pf:severity "info" ;
+  pf:sendTimeCheck true ;
+  pf:requires "config.frequencyCapPerWeek" ;
+  pf:severityBasis "The statute creates the duty but sets no number; the business supplies the threshold (Layer A → C). Absence of a configured cap is information, not a breach of a specific message." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-NBFC-RBC-2025/fpc-harassment>, <https://preflight.dev/clause/FACE-FREQUENCY/internal-limit> .
+
+rule:A-RBI-006 a pf:Rule ;
+  pf:id "A-RBI-006" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "consent" ;
+  pf:title "Explicit consent before promotional communication" ;
+  pf:severity "block" ; pf:severityBefore "warn" ; pf:effectiveFrom "2027-01-01"^^xsd:date ;
+  pf:sendTimeCheck true ;
+  pf:requires "contact.consentPromotional" ;
+  pf:severityBasis "Warn until the obligation commences on 1 Jan 2027; block thereafter because 85L makes explicit consent a precondition of any promotional send." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/85L> .
+
+rule:A-RBI-007 a pf:Rule ;
+  pf:id "A-RBI-007" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "consent" ;
+  pf:title "Per-product consent — promotional consent not bundled" ;
+  pf:severity "block" ; pf:severityBefore "warn" ; pf:effectiveFrom "2027-01-01"^^xsd:date ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.product", "consent.productScoped" ;
+  pf:severityBasis "Same commencement date and precondition logic as A-RBI-006, scoped to the product the campaign promotes (85G/85Q)." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/85G>, <https://preflight.dev/clause/RBI-2026-27-115/85Q> .
+
+rule:A-RBI-008 a pf:Rule ;
+  pf:id "A-RBI-008" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "content" ;
+  pf:title "Promotional message carries an opt-out" ;
+  pf:severity "block" ; pf:severityBefore "warn" ; pf:effectiveFrom "2027-01-01"^^xsd:date ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.message" ;
+  pf:severityBasis "Only the PRESENCE half of 85M is a send-time check; 'easy and simple' is a product obligation inside the lender's app. Block from 1 Jan 2027." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/85M> .
+
+rule:A-RBI-009 a pf:Rule ;
+  pf:id "A-RBI-009" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:category "consent" ;
+  pf:title "Retention of consent and communication records until one year after the contract ends" ;
+  pf:severity "info" ; pf:effectiveFrom "2027-01-01"^^xsd:date ;
+  pf:sendTimeCheck false ;
+  pf:severityBasis "Not a send-time check — it is the reason the evidence record exists. Retention is contract life + 1 year, longer than secondary reporting claimed." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/85G-retention> .
+
+rule:A-RBI-010 a pf:Rule ;
+  pf:id "A-RBI-010" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:category "consent" ;
+  pf:title "No dark patterns in consent capture" ;
+  pf:severity "info" ; pf:effectiveFrom "2027-01-01"^^xsd:date ;
+  pf:sendTimeCheck false ;
+  pf:severityBasis "Not a send-time check — governs the bank's own consent UI (default-yes boxes, forced redirects). Listed so the boundary of coverage is explicit." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/4-10.1A>, <https://preflight.dev/clause/RBI-2026-27-115/85I> .
+
+rule:A-RBI-011 a pf:Rule ;
+  pf:id "A-RBI-011" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "identity" ;
+  pf:title "Lender or agent identity disclosed in the message" ;
+  pf:severity "warn" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.message", "config.lenderName" ;
+  pf:severityBasis "Presence of an identifying string is checkable; whether it is the RIGHT entity needs config — partial checkability keeps this at warn." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-DLD-2025/lsp-identity>, <https://preflight.dev/clause/RBI-2026-27-115/85O>, <https://preflight.dev/clause/RBI-2026-27-115/85N-3> .
+
+rule:A-RBI-012 a pf:Rule ;
+  pf:id "A-RBI-012" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "timing" ;
+  pf:title "Sales calls/visits only between 09:00 and 19:00 IST" ;
+  pf:severity "block" ; pf:severityBefore "warn" ; pf:effectiveFrom "2027-01-01"^^xsd:date ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.scheduledAt", "campaign.channel" ;
+  pf:severityBasis "85N(4) covers telephonic contacts and visits, NOT messages — scoped to channels voice/visit and therefore inert for WhatsApp/SMS/email in v1. Secondary reporting overstated it as a messaging window." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/85N-4> .
+
+rule:A-RBI-013 a pf:Rule ;
+  pf:id "A-RBI-013" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "consent" ;
+  pf:title "Bank-internal promotional Do-Not-Disturb requests honoured" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "consent.current" ;
+  pf:severityBasis "A customer who asked an agent not to be disturbed for promotional communication must not receive one; checkable once consent_records carries 'denied' for promotional." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/85N-7> .
+
+rule:A-RBI-014 a pf:Rule ;
+  pf:id "A-RBI-014" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "content" ;
+  pf:title "Promotional credit message discloses the interest rate and fees" ;
+  pf:severity "warn" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.message" ;
+  pf:severityBasis "85K is PRIMARY but the disclosure pattern is heuristic (numeric rate or fee phrase); warn so a human confirms rather than the tool over-blocking." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/85K> .
+
+# ---------------------------------------------------------------- rules: A-IN
+
+rule:A-IN-001 a pf:Rule ;
+  pf:id "A-IN-001" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "delivery" ;
+  pf:title "Promotional SMS on a registered DLT header and registered template" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.channel", "platform.templates" ;
+  pf:severityBasis "Unregistered promotional SMS simply does not deliver; 85ZA(1) bridges the RBI regime to TCCCPR." ;
+  pf:derivedFrom <https://preflight.dev/clause/TRAI-TCCCPR-2018/dlt>, <https://preflight.dev/clause/RBI-2026-27-115/85ZA-1> .
+
+rule:A-IN-002 a pf:Rule ;
+  pf:id "A-IN-002" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "consent" ;
+  pf:title "DND/NCPR scrubbing for promotional SMS and voice" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.channel", "consent.dnd" ;
+  pf:severityBasis "Sending promotional SMS/voice to an NCPR-registered number is a direct TRAI breach with telco-level penalties. Does not apply to WhatsApp." ;
+  pf:derivedFrom <https://preflight.dev/clause/TRAI-TCCCPR-2018/ncpr> .
+
+rule:A-IN-003 a pf:Rule ;
+  pf:id "A-IN-003" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "content" ;
+  pf:title "Message correctly classified promotional vs service" ;
+  pf:severity "info" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.message" ;
+  pf:severityBasis "A gate, not a breach: it decides whether the consent, DND and opt-out rules apply. Low confidence is reported as info and evaluated under the stricter reading." ;
+  pf:derivedFrom <https://preflight.dev/clause/RBI-2026-27-115/85L> .
+
+rule:A-IN-004 a pf:Rule ;
+  pf:id "A-IN-004" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "consent" ;
+  pf:title "Purpose-bound consent for promotional messages" ;
+  pf:severity "block" ; pf:severityBefore "warn" ; pf:effectiveFrom "2027-05-13"^^xsd:date ;
+  pf:sendTimeCheck true ;
+  pf:requires "contact.consentPromotional" ;
+  pf:severityBasis "DPDP is the general case that lands 13 May 2027; for a lender A-RBI-006 subsumes it 250 days earlier. Block on commencement." ;
+  pf:derivedFrom <https://preflight.dev/clause/DPDP-2023/s6> ;
+  skos:closeMatch rule:A-RBI-006 .
+
+rule:A-IN-005 a pf:Rule ;
+  pf:id "A-IN-005" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "consent" ;
+  pf:title "Withdrawal of consent honoured across all channels" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "consent.current" ;
+  pf:severityBasis "Opting out on one channel withdraws consent; continuing on another channel is a breach. Exact-match identity only in v1 (stated in coverage)." ;
+  pf:derivedFrom <https://preflight.dev/clause/DPDP-2023/s6> .
+
+rule:A-IN-006 a pf:Rule ;
+  pf:id "A-IN-006" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:category "consent" ;
+  pf:title "Notice at point of consent collection" ;
+  pf:severity "info" ;
+  pf:sendTimeCheck false ;
+  pf:severityBasis "Not a send-time check — governs the consent-capture UI. Listed to keep the coverage boundary honest." ;
+  pf:derivedFrom <https://preflight.dev/clause/DPDP-2023/s5> .
+
+# ---------------------------------------------------------------- rules: A-WA
+
+rule:A-WA-001 a pf:Rule ;
+  pf:id "A-WA-001" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "delivery" ;
+  pf:title "Outside the 24-hour window, only an approved template" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.channel", "history.contactEvents" ;
+  pf:severityBasis "A free-form message outside the session window is rejected by the platform; needs per-contact inbound history (cold-start applies)." ;
+  pf:derivedFrom <https://preflight.dev/clause/META-WA-POLICY/session-window> .
+
+rule:A-WA-002 a pf:Rule ;
+  pf:id "A-WA-002" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "delivery" ;
+  pf:title "Template is APPROVED and in the correct category" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.template.externalId", "platform.templates" ;
+  pf:severityBasis "An unapproved or miscategorised template is rejected or paused by Meta — a common, punished failure." ;
+  pf:derivedFrom <https://preflight.dev/clause/META-WA-POLICY/template-approval> .
+
+rule:A-WA-003 a pf:Rule ;
+  pf:id "A-WA-003" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 0 ; pf:category "delivery" ;
+  pf:title "WhatsApp template variables match the approved template" ;
+  pf:severity "block" ;
+  pf:sendTimeCheck true ;
+  pf:requires "campaign.template.body", "campaign.template.variables" ;
+  pf:severityBasis "Purely deterministic; a variable-shape mismatch means the send simply fails." ;
+  pf:derivedFrom <https://preflight.dev/clause/META-WA-POLICY/template-variables> .
+
+rule:A-WA-004 a pf:Rule ;
+  pf:id "A-WA-004" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "audience" ;
+  pf:title "Audience size within the number's current messaging tier" ;
+  pf:severity "warn" ;
+  pf:sendTimeCheck true ;
+  pf:requires "platform.messagingLimit" ;
+  pf:severityBasis "Part of the send fails silently beyond the tier; a warning because the send is not prohibited, only truncated." ;
+  pf:derivedFrom <https://preflight.dev/clause/META-WA-POLICY/messaging-limits> .
+
+rule:A-WA-005 a pf:Rule ;
+  pf:id "A-WA-005" ; pf:pack "india-layer-a" ; pf:layer "A" ; pf:tier 1 ; pf:category "delivery" ;
+  pf:title "Quality-rating gate before a large marketing send" ;
+  pf:severity "warn" ;
+  pf:sendTimeCheck true ;
+  pf:requires "platform.qualityRating" ;
+  pf:severityBasis "The rating is a lagging proxy — no provider exposes block/report events — so it warns rather than blocks." ;
+  pf:derivedFrom <https://preflight.dev/clause/META-WA-POLICY/quality-rating> .
