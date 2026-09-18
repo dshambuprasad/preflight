@@ -1,0 +1,10 @@
+{
+  "name": "@preflight/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "pg-boss consumer process (02 §2). In v1 the api runs the same handlers in-process (PREFLIGHT_ROLE=all); this entry is the PREFLIGHT_ROLE=worker deployment (M6 split).",
+  "scripts": { "build": "tsc -b", "typecheck": "tsc -b", "start": "node dist/src/main.js" },
+  "dependencies": { "@preflight/api": "workspace:*", "@preflight/core": "workspace:*", "@preflight/db": "workspace:*" },
+  "devDependencies": { "@types/node": "22.20.2", "typescript": "5.9.3" }
+}

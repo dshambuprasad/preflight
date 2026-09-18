@@ -1,4 +1,4 @@
-# Preflight — laptop / demo stack (09 §4). M0: Postgres only; api and web services are added by the api/web work.
+# `docker compose -f infra/compose.yaml up` = the full system (09 §4). Postgres 16 · api (api+worker) · web (nginx).
 name: preflight
 services:
   db:
@@ -8,13 +8,45 @@ services:
       POSTGRES_PASSWORD: preflight
       POSTGRES_DB: preflight
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
-      - preflight-pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U preflight -d preflight"]
+      test: ['CMD-SHELL', 'pg_isready -U preflight -d preflight']
       interval: 5s
-      timeout: 3s
+      timeout: 5s
       retries: 20
+
+  api:
+    build:
+      context: ..
+      dockerfile: infra/api.Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PREFLIGHT_ROLE: all
+      PORT: '3000'
+      DATABASE_URL: postgres://preflight:preflight@db:5432/preflight
+      PREFLIGHT_KMS_KEY: ${PREFLIGHT_KMS_KEY:-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
+      PREFLIGHT_SESSION_SECRET: ${PREFLIGHT_SESSION_SECRET:-demo-session-secret-change-me-please-32b}
+      PREFLIGHT_PUBLIC_URL: ${PREFLIGHT_PUBLIC_URL:-http://localhost:8080}
+      PREFLIGHT_WEB_ORIGIN: ${PREFLIGHT_WEB_ORIGIN:-http://localhost:8080}
+      PREFLIGHT_DEMO_MOCK_CONNECTORS: 'false'
+      PREFLIGHT_SEED_PASSWORD: ${PREFLIGHT_SEED_PASSWORD:-demo-pass-1234}
+      LOG_LEVEL: info
+    ports:
+      - '3000:3000'
+
+  web:
+    build:
+      context: ..
+      dockerfile: infra/web.Dockerfile
+    depends_on:
+      - api
+    ports:
+      - '8080:80'
+
 volumes:
-  preflight-pgdata:
+  pgdata:

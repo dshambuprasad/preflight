@@ -5,8 +5,9 @@ import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import swagger from '@fastify/swagger';
-import { ZodError } from 'zod';
-import { hasZodFastifySchemaValidationErrors, isResponseSerializationError, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
+import { ZodError, z } from 'zod';
+import { createJsonSchemaTransform, createJsonSchemaTransformObject, hasZodFastifySchemaValidationErrors, isResponseSerializationError, serializerCompiler, validatorCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
+import * as S from './schemas/index.js';
 import { InvalidTransition, NotFound } from '@preflight/db';
 import { randomUUID } from 'node:crypto';
 import { AppError, type Problem } from './errors.js';
@@ -39,9 +40,19 @@ export async function buildApp(deps: AppDeps, opts: { webOrigin?: string } = {})
   await app.register(cors, { origin: opts.webOrigin ?? true, credentials: true, exposedHeaders: ['x-request-id', 'idempotent-replayed'] });
   await app.register(cookie);
   await app.register(rateLimit, { max: deps.env.PREFLIGHT_RATE_LIMIT_PER_MIN, timeWindow: '1 minute', keyGenerator: (req) => req.headers.authorization ?? req.cookies?.pf_session ?? req.ip });
+  // named components so packages/api-types gets reusable types (16 §2.6)
+  const named: Record<string, z.ZodType> = {
+    UserRef: S.UserRef, Citation: S.Citation, What: S.What, SuggestedFix: S.SuggestedFix, Classification: S.Classification, Coverage: S.Coverage,
+    Summary: S.Summary, Decision: S.Decision, Finding: S.Finding, Template: S.Template, VersionSummary: S.VersionSummary, VersionDetail: S.VersionDetail,
+    Problem: S.Problem, Campaign: S.Campaign, CampaignListItem: S.CampaignListItem, CampaignDetail: S.CampaignDetail, CreateCampaignBody: S.CreateCampaignBody,
+    CreateVersionBody: S.CreateVersionBody, CreateVersionResponse: S.CreateVersionResponse, EvaluationDetail: S.EvaluationDetail, EvaluationListItem: S.EvaluationListItem,
+    Me: S.Me, LoginBody: S.LoginBody, RulebookInfo: S.RulebookInfo, RuleListItem: S.RuleListItem, Health: S.Health, EvaluateBody: S.EvaluateBody,
+  };
+  for (const [id, schema] of Object.entries(named)) if (!z.globalRegistry.has(schema)) z.globalRegistry.add(schema, { id });
   await app.register(swagger, {
     openapi: { info: { title: 'Preflight API', version: '1' }, servers: [{ url: '/v1' }] },
-    transform: jsonSchemaTransform,
+    transform: createJsonSchemaTransform({ schemaRegistry: z.globalRegistry }),
+    transformObject: createJsonSchemaTransformObject({ schemaRegistry: z.globalRegistry }),
   });
 
   app.setErrorHandler((err: unknown, req, reply) => {

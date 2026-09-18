@@ -1,0 +1,47 @@
+# 09 §4 — lint → typecheck → unit → integration (Postgres service) → bench → build. e2e (Playwright vs compose)
+# is added in M1 with the demo script. Every step here is also runnable locally via `pnpm ci:local`.
+name: ci
+on:
+  push:
+    branches: [main, 'm[0-9]*']
+  pull_request:
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: preflight
+          POSTGRES_PASSWORD: preflight
+          POSTGRES_DB: preflight
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U preflight" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://preflight:preflight@localhost:5432/preflight
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9.15.9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: build
+        run: pnpm build
+      - name: lint (eslint + allowed-imports matrix + migration/tenancy checks)
+        run: pnpm lint
+      - name: licence allowlist (09 §2)
+        run: pnpm check:licences
+      - name: audit
+        run: pnpm audit --prod --audit-level high || true
+      - name: unit
+        run: pnpm test
+      - name: integration (Postgres)
+        run: pnpm test:integration
+      - name: bench (18 §7 — fails on 2× regression)
+        run: pnpm bench
+      - name: docker images build
+        run: docker compose -f infra/compose.yaml build
