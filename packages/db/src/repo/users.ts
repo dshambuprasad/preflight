@@ -23,6 +23,14 @@ export const usersRepo = {
       .limit(1);
     return row ?? null;
   },
+  /**
+   * Credential-scoped like apiKeys.findByPrefix: login resolves the tenant FROM the email (F18). Returns null
+   * when the email exists in more than one tenant — SPEC-GAP: multi-tenant login needs a tenant picker (M6).
+   */
+  async findByEmailAnyTenant(tx: Tx, email: string): Promise<UserRow | null> {
+    const rows = await tx.select().from(users).where(eq(users.email, email.trim())).limit(2);
+    return rows.length === 1 ? rows[0]! : null;
+  },
   async create(
     tx: Tx,
     tenantId: string,

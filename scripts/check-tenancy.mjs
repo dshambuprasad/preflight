@@ -10,6 +10,7 @@ const ALLOW = new Set([
   'tenantsRepo.*',
   'rulebookVersionsRepo.*',
   'apiKeysRepo.findByPrefix',
+  'usersRepo.findByEmailAnyTenant',
 ]);
 const problems = [];
 let checked = 0;
